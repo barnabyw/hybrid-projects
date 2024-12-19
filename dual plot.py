@@ -6,7 +6,6 @@ Created on Thu Dec  5 16:49:25 2024
 @author: barnabywinser
 """""
 import pandas as pd
-
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
@@ -14,9 +13,6 @@ import plotly.io as pio
 import kaleido
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-
-from plotly.subplots import make_subplots
-import plotly.graph_objects as go
 
 UI = "y"
 
@@ -171,8 +167,6 @@ fig.add_trace(go.Scatter(
     line=dict(color='grey', width=2),
     showlegend=False
 ), row=1, col=2)
-
-
 
 
 # Define a master variable for text size
