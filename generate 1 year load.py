@@ -11,9 +11,9 @@ import numpy as np
 
 # Updated data for one day (24 hours)
 hourly_data = [
-    89.22, 89.09, 89.24, 89.92, 90.69, 91.52, 92.68, 96.01,
-    98.59, 99.15, 99.50, 99.76, 99.96, 100.00, 99.93, 99.63,
-    98.75, 97.01, 95.54, 94.13, 92.39, 90.94, 89.48, 89.37
+95.13, 95.05, 95.20, 95.31, 95.65, 96.10, 96.70, 97.59,     
+98.47, 99.04, 99.44, 99.71, 99.90, 100.00, 99.83, 99.58,    
+ 99.28, 98.90, 98.30, 97.42, 96.57, 96.01, 95.54, 95.36
 ]
 
 # Total hours in a year
@@ -30,4 +30,4 @@ yearly_data = pd.DataFrame({'Timestamp': timestamps, 'Value': repeated_data})
 print(yearly_data.head())
 
 # Save to a CSV file (optional)
-yearly_data.to_csv("/Users/barnabywinser/Library/CloudStorage/OneDrive-SharedLibraries-Rheenergise/Commercial - Documents/Cost Models/ESC Co-Location Model/Case study data/08 Chile fictional data centre/demand data/year.csv", index=False)
+yearly_data.to_csv("/Users/barnabywinser/Library/CloudStorage/OneDrive-SharedLibraries-Rheenergise/Commercial - Documents/Cost Models/ESC Co-Location Model/Case study data/08 Chile fictional data centre/demand data/year2.csv", index=False)
