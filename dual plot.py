@@ -25,14 +25,13 @@ start_date_2 = pd.to_datetime('2023-01-21 00:00:00')
 end_date_2 = start_date_2 + pd.Timedelta(days=7)
 
 folder = '/Users/barnabywinser/Documents/Chile data centre/' #where the scenarios are stored (this is a renamed UI.xlsm file)
-output_f = '/Users/barnabywinser/Documents/Chile data centre/plots/' #
+output_f = '/Users/barnabywinser/Documents/Chile data centre/plots/' #where the plot is saved
 
-scenario = "A3.xlsm" #name of excel file for left graph
-scenario_2 = "A4.xlsm" #name of excel file for right graph
+scenario = "A3.xlsm" # name of excel file for left graph
+scenario_2 = "A4.xlsm" # name of excel file for right graph
 
-positive_defaults = ['Solar_generation', 'HD_Hydro_discharge', 'Solar_new_generation', 'Wind_generation', 'Grid_imports', "Diesel_imports", "Solar_vertical_generation"] #'Discharging Power (kW)'
-negative_defaults = ['Export_cable_exports', 'HD_Hydro_charge', 'curtailment'] #'Charging Power (kW)',
-title = "Site operation for a week in " + start_date_1.strftime("%B") + " (with storage)"
+positive_defaults = ['Solar_generation', 'HD_Hydro_discharge', 'Solar_new_generation', 'Wind_generation', 'Grid_imports', "Diesel_imports", "Solar_vertical_generation"] 
+negative_defaults = ['Export_cable_exports', 'HD_Hydro_charge', 'curtailment']
 
 #generate colors
 colors = sns.color_palette("pastel", 10).as_hex()
@@ -90,14 +89,14 @@ fig = make_subplots(
     ]
 )
 
-# Track already added legend entries
+# Track already added legend entries - this ensures they only appear once on the legend
 legend_entries = set()
 
 # Filter the DataFrame based on the two date ranges
 filtered_df_1 = df[(df['Datetime'] >= start_date_1) & (df['Datetime'] <= end_date_1)]
 filtered_df_2 = df2[(df2['Datetime'] >= start_date_2) & (df2['Datetime'] <= end_date_2)]
 
-# Function to add traces dynamically based on column intersection with defaults
+# Function to add traces (bars) dynamically based on column intersection with defaults
 def add_traces(fig, filtered_df, columns, defaults, row, col, legend_entries):
     # Get the intersection of columns and defaults
     intersected_columns = list(set(columns) & set(defaults))
@@ -114,7 +113,7 @@ def add_traces(fig, filtered_df, columns, defaults, row, col, legend_entries):
             ), row=row, col=col)
         legend_entries.add(legend_label)
 
-# Add traces dynamically for each subplot
+# Add traces dynamically for each subplot, positive and negative separately
 add_traces(fig, filtered_df_1, cols, positive_defaults, 1, 1, legend_entries)
 add_traces(fig, filtered_df_1, cols, negative_defaults, 1, 1, legend_entries)
 add_traces(fig, filtered_df_2, cols2, positive_defaults, 1, 2, legend_entries)
