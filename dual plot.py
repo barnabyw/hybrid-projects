@@ -14,31 +14,28 @@ import kaleido
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-UI = "y"
+UI = "n" # If 'y', then the file path containing the UI is used
 
-colors = sns.color_palette("pastel", 10).as_hex()
-
-# Define two different date ranges
+# start date and range for left hand graph
 start_date_1 = pd.to_datetime('2023-01-21 00:00:00')
 end_date_1 = start_date_1 + pd.Timedelta(days=7)
 
-start_date_2 = pd.to_datetime('2023-07-14 00:00:00')
+# start date and range for right hand graph
+start_date_2 = pd.to_datetime('2023-01-21 00:00:00')
 end_date_2 = start_date_2 + pd.Timedelta(days=7)
 
+folder = '/Users/barnabywinser/Documents/Chile data centre/' #where the scenarios are stored (this is a renamed UI.xlsm file)
+output_f = '/Users/barnabywinser/Documents/Chile data centre/plots/' #
 
-folder = '/Users/barnabywinser/Documents/Chile data centre/'
-output_f = '/Users/barnabywinser/Documents/Chile data centre/plots/'
-
-scenario = "S1.xlsm"
-scenario_2 = "S2.xlsm"
-
-plotname = 'S3'
-range = [-29,49]
-
+scenario = "A3.xlsm" #name of excel file for left graph
+scenario_2 = "A4.xlsm" #name of excel file for right graph
 
 positive_defaults = ['Solar_generation', 'HD_Hydro_discharge', 'Solar_new_generation', 'Wind_generation', 'Grid_imports', "Diesel_imports", "Solar_vertical_generation"] #'Discharging Power (kW)'
 negative_defaults = ['Export_cable_exports', 'HD_Hydro_charge', 'curtailment'] #'Charging Power (kW)',
 title = "Site operation for a week in " + start_date_1.strftime("%B") + " (with storage)"
+
+#generate colors
+colors = sns.color_palette("pastel", 10).as_hex()
 
 # Assign colors to categories
 green = colors[2]    # Renewable generation
@@ -50,48 +47,37 @@ purple = colors[4]   # Discharge power
 light_blue = colors[9]
 grey = colors[7]   # Diesel generation
 
-# Manually specify colors and labels for each column
+# Manually specify colors and labels for each column within the excel file
 color_label_mapping = {
     'Wind_generation': {'color': green, 'label': 'Wind Generation'},
-    'HD_Hydro_discharge': {'color': purple, 'label': 'HD Hydro Discharge'},
+    'HD_Hydro_discharge': {'color': blue, 'label': 'HD Hydro Discharge'},
     'Diesel_imports': {'color': red, 'label': 'Diesel'},
-    'HD_Hydro_charge': {'color': blue, 'label': 'HD Hydro Charge'},
+    'HD_Hydro_charge': {'color': purple, 'label': 'HD Hydro Charge'},
     'Solar_generation': {'color': green, 'label': 'Solar Generation'},
     'Grid_imports': {'color': pink, 'label': 'Import from grid'},
     'curtailment': {'color': orange, 'label': 'Curtailment'},
     'Solar_vertical_generation': {'color': green, 'label': 'Solar Generation'},
     'Wind_new_generation': {'color': green, 'label': 'New Wind Generation'}
 }
-
-folder = '/Users/barnabywinser/Library/CloudStorage/OneDrive-SharedLibraries-Rheenergise/Commercial - Documents/Opportunities/Enlasa/Co-location/results/'
     
 
 if UI == 'y':
     file = '/Users/barnabywinser/Documents/Co-location-directory/co-location-model-Final/co-location-model-Final/UI.xlsm'
 
 else:
-    
     file = folder + scenario
+    file_2 = folder + scenario_2
 
-# Load your data (replace with your actual file path)
-df = pd.read_excel(file, 
-                   sheet_name='Results - Operation')
-# Convert 'Datetime' column to datetime
+# Load your data
+df = pd.read_excel(file, sheet_name='Results - Operation')
 df['Datetime'] = pd.to_datetime(df['Datetime'])
 
-#scan for which columns are present
+df2 = pd.read_excel(file_2, sheet_name='Results - Operation')
+df2['Datetime'] = pd.to_datetime(df2['Datetime'])
+
+# Scan for which columns are present
 cols = list(df.columns)
-
-#constrain the plot to these cols
-positive_columns = list(set(cols) & set(positive_defaults))
-negative_columns = list(set(cols) & set(negative_defaults))
-
-# Track already added legend entries
-legend_entries = set()
-
-# Filter the DataFrame based on the two date ranges
-filtered_df_1 = df[(df['Datetime'] >= start_date_1) & (df['Datetime'] <= end_date_1)]
-filtered_df_2 = df[(df['Datetime'] >= start_date_2) & (df['Datetime'] <= end_date_2)]
+cols2 = list(df2.columns)
 
 # Create subplots with 1 row and 2 columns
 fig = make_subplots(
@@ -104,9 +90,19 @@ fig = make_subplots(
     ]
 )
 
-def add_traces(fig, filtered_df, columns, row, col, legend_entries):
+# Track already added legend entries
+legend_entries = set()
+
+# Filter the DataFrame based on the two date ranges
+filtered_df_1 = df[(df['Datetime'] >= start_date_1) & (df['Datetime'] <= end_date_1)]
+filtered_df_2 = df2[(df2['Datetime'] >= start_date_2) & (df2['Datetime'] <= end_date_2)]
+
+# Function to add traces dynamically based on column intersection with defaults
+def add_traces(fig, filtered_df, columns, defaults, row, col, legend_entries):
+    # Get the intersection of columns and defaults
+    intersected_columns = list(set(columns) & set(defaults))
     
-    for col_name in columns:
+    for col_name in intersected_columns:
         legend_label = color_label_mapping.get(col_name, {}).get('label', col_name)
         show_legend = legend_label not in legend_entries
         fig.add_trace(go.Bar(
@@ -118,10 +114,11 @@ def add_traces(fig, filtered_df, columns, row, col, legend_entries):
             ), row=row, col=col)
         legend_entries.add(legend_label)
 
-add_traces(fig, filtered_df_1, positive_columns, 1, 1, legend_entries)
-add_traces(fig, filtered_df_1, negative_columns, 1, 1, legend_entries)
-add_traces(fig, filtered_df_2, positive_columns, 1, 2, legend_entries)
-add_traces(fig, filtered_df_2, negative_columns, 1, 2, legend_entries)
+# Add traces dynamically for each subplot
+add_traces(fig, filtered_df_1, cols, positive_defaults, 1, 1, legend_entries)
+add_traces(fig, filtered_df_1, cols, negative_defaults, 1, 1, legend_entries)
+add_traces(fig, filtered_df_2, cols2, positive_defaults, 1, 2, legend_entries)
+add_traces(fig, filtered_df_2, cols2, negative_defaults, 1, 2, legend_entries)
     
 # Add the Demand line trace for the first date range
 fig.add_trace(go.Scatter(
@@ -145,9 +142,9 @@ fig.add_trace(go.Scatter(
 
 
 # Define a master variable for text size
-master_text_size = 24
+master_text_size = 36
 
-def create_axis_settings(gridcolor='rgba(128, 128, 128, 0.3)', font_size=24):
+def create_axis_settings(gridcolor='rgba(128, 128, 128, 0.3)', font_size=36):
     """Create settings for axes to reduce repetition."""
     return dict(
         showgrid=True,
@@ -208,6 +205,5 @@ fig.update_layout(
     bargap=0.05  # Set bar gap
 )
 
-# Show the plot
-fig.show()
-fig.write_image(output_f + start_date_1.strftime("%B") +  scenario + "23.png", width=1500, height=600, scale=4)
+# save the plot
+fig.write_image(output_f + start_date_1.strftime("%B") +  scenario + ".png", width=1920, height=1080, scale=3)
