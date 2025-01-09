@@ -15,27 +15,31 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 
-UI = "y"
+"""Left hand graphs specifications"""
+
+#scenario for left hand graph
+scenario = "S3.xlsm"
+# start date and range for left hand graph
+start_date_1 = pd.to_datetime('2023-07-14 00:00:00')
+end_date_1 = start_date_1 + pd.Timedelta(days=7)
+
+""""""
+
+folder = '/Users/barnabywinser/Documents/Chile data centre/' #where the scenarios are stored (this is a renamed UI.xlsm file)
+output_f = '/Users/barnabywinser/Documents/Chile data centre/plots/' #where the plot is saved
+
+UI = "n"
 
 colors = sns.color_palette("pastel", 10).as_hex()
 
-start_date = pd.to_datetime('2023-08-14 00:00:00')
+start_date = pd.to_datetime('2023-07-14 00:00:00')
 end_date = start_date + pd.Timedelta(days=7)
 
-baseline = ''
 
-range = [-35,55]
-
-if baseline == 'y':
-    positive_defaults = ['Solar_generation', 'HD_Hydro_discharge', 'Solar_new_generation', 'Wind_generation', 'Grid_imports', "Diesel_imports", "Solar_vertical_generation"] #'Discharging Power (kW)'
-    negative_defaults = ['Grid_exports', 'HD_Hydro_charge', 'curtailment'] #'Charging Power (kW)',
-    title = "Site operation for a week in " + start_date.strftime("%B") + " (without storage)"
-    scenario = 'Result'
-else:
-    positive_defaults = ['Solar_generation', 'HD_Hydro_discharge', 'Solar_new_generation', 'Wind_generation', 'Grid_imports', "Diesel_imports", "Solar_vertical_generation"] #'Discharging Power (kW)'
-    negative_defaults = ['Grid_exports', 'HD_Hydro_charge', 'curtailment'] #'Charging Power (kW)',
-    title = "Site operation for a week in " + start_date.strftime("%B") + " (with storage)"
-    scenario = 'S1.xlsm'
+positive_defaults = ['Solar_generation', 'HD_Hydro_discharge', 'Solar_new_generation', 'Wind_generation', 'Grid_imports', "Diesel_imports", "Solar_vertical_generation"] #'Discharging Power (kW)'
+negative_defaults = ['Grid_exports', 'HD_Hydro_charge', 'curtailment'] #'Charging Power (kW)',
+title = "Site operation for a week in " + start_date.strftime("%B") + " (with storage)"
+scenario = 'S4.xlsm'
 
 # Assign colors to categories
 green = colors[2]    # Renewable generation
@@ -47,20 +51,18 @@ purple = colors[4]   # Discharge power
 light_blue = colors[9]
 grey = colors[7]   # Diesel generation
 
-# Manually specify colors and labels for each column
+# Manually specify colors and labels for each column within the excel file
 color_label_mapping = {
     'Wind_generation': {'color': green, 'label': 'Wind Generation'},
-    'HD_Hydro_discharge': {'color': purple, 'label': 'HD Hydro Discharge'},
-    'curtailment': {'color': red, 'label': 'Curtailment'},
-    'HD_Hydro_charge': {'color': blue, 'label': 'HD Hydro Charge'},
+    'HD_Hydro_discharge': {'color': blue, 'label': 'HD Hydro Discharge'},
+    'Diesel_imports': {'color': red, 'label': 'Diesel'},
+    'HD_Hydro_charge': {'color': purple, 'label': 'HD Hydro Charge'},
     'Solar_generation': {'color': green, 'label': 'Solar Generation'},
-    'Grid_imports': {'color': orange, 'label': 'Import from grid'},
-    'Grid_exports': {'color': pink, 'label': 'Export to grid'},
+    'Grid_imports': {'color': pink, 'label': 'Import from grid'},
+    'curtailment': {'color': orange, 'label': 'Curtailment'},
     'Solar_vertical_generation': {'color': green, 'label': 'Solar Generation'},
     'Wind_new_generation': {'color': green, 'label': 'New Wind Generation'}
 }
-
-folder = '/Users/barnabywinser/Library/CloudStorage/OneDrive-SharedLibraries-Rheenergise/Commercial - Documents/Opportunities/Enlasa/Co-location/results/'
     
 
 if UI == 'y':
@@ -199,7 +201,7 @@ zerolinewidth=1  # Set the width of the y-axis lin
     zerolinecolor='rgba(128, 128, 128, 0.3)',  # Set the color of the y-axis line
     zerolinewidth=1  # Set the width of the y-axis lin
     ),
-    showlegend=False,
+    showlegend=True,
     legend=dict(orientation="h", yanchor="bottom", y=1.05, xanchor="center", x=0.5, font=dict(size=master_text_size)),
     plot_bgcolor='rgba(0, 0, 0, 0)',
     paper_bgcolor='rgba(0, 0, 0, 0)',
@@ -210,4 +212,4 @@ zerolinewidth=1  # Set the width of the y-axis lin
 fig_combined.show()
 
 # Save the combined plot as an image
-fig_combined.write_image("/Users/barnabywinser/Documents/" + start_date.strftime("%B") + scenario + "_combined.png", width=1200, height=1200, scale=4)
+fig_combined.write_image(output_f + start_date.strftime("%B") + scenario + "_combined.png", width=1400, height=1200, scale=4)

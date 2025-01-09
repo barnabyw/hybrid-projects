@@ -14,21 +14,33 @@ import kaleido
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-UI = "n" # If 'y', then the file path containing the UI is used
 
+"""Left hand graphs specifications"""
+
+#scenario for left hand graph
+scenario = "S3.xlsm"
 # start date and range for left hand graph
-start_date_1 = pd.to_datetime('2023-01-21 00:00:00')
+start_date_1 = pd.to_datetime('2023-07-14 00:00:00')
 end_date_1 = start_date_1 + pd.Timedelta(days=7)
 
+
+"""Right hand graph specifications"""
+
+#scenario for right hand graph
+scenario_2 = "S4.xlsm"
 # start date and range for right hand graph
-start_date_2 = pd.to_datetime('2023-01-21 00:00:00')
+start_date_2 = pd.to_datetime('2023-07-14 00:00:00')
 end_date_2 = start_date_2 + pd.Timedelta(days=7)
+
+""""""
+
+UI = "n" # If 'y', then the file path containing the UI is used
 
 folder = '/Users/barnabywinser/Documents/Chile data centre/' #where the scenarios are stored (this is a renamed UI.xlsm file)
 output_f = '/Users/barnabywinser/Documents/Chile data centre/plots/' #where the plot is saved
 
-scenario = "A3.xlsm" # name of excel file for left graph
-scenario_2 = "A4.xlsm" # name of excel file for right graph
+scenario = "A1.xlsm" # name of excel file for left graph
+scenario_2 = "A2.xlsm" # name of excel file for right graph
 
 positive_defaults = ['Solar_generation', 'HD_Hydro_discharge', 'Solar_new_generation', 'Wind_generation', 'Grid_imports', "Diesel_imports", "Solar_vertical_generation"] 
 negative_defaults = ['Export_cable_exports', 'HD_Hydro_charge', 'curtailment']
@@ -84,8 +96,8 @@ fig = make_subplots(
     shared_yaxes=True,  # Share y-axis between the two plots
     column_widths=[0.5, 0.5],  # Equal widths for both columns
     subplot_titles=[
-        f"Week Starting {start_date_1.strftime('%B %d, %Y')}",
-        f"Week Starting {start_date_2.strftime('%B %d, %Y')}"
+        "Off grid, no storage",
+        "Off grid + storage"
     ]
 )
 
@@ -161,21 +173,21 @@ fig.update_layout(
     annotations=[
         # Title for the first subplot
         dict(
-            x=0.25,  # Centered above the first subplot (adjust as needed)
+            x=0.22,  # Centered above the first subplot (adjust as needed)
             y=1,  # Position above the plot
             xref="paper",  # Use figure-relative coordinates
             yref="paper",  # Use figure-relative coordinates
-            text=f"Week Starting {start_date_1.strftime('%B %d, %Y')}",  # Title for the first plot
+            text="Off grid, no storage",  # Title for the first plot
             showarrow=False,  # Hide the arrow
             font=dict(size=master_text_size - 2)  # Adjust font size
         ),
         # Title for the second subplot
         dict(
-            x=0.75,  # Centered above the second subplot (adjust as needed)
+            x=0.78,  # Centered above the second subplot (adjust as needed)
             y=1,  # Position above the plot
             xref="paper",  # Use figure-relative coordinates
             yref="paper",  # Use figure-relative coordinates
-            text=f"Week Starting {start_date_2.strftime('%B %d, %Y')}",  # Title for the second plot
+            text="Off grid + storage",  # Title for the second plot
             showarrow=False,  # Hide the arrow
             font=dict(size=master_text_size - 2)  # Adjust font size
         )
@@ -205,4 +217,4 @@ fig.update_layout(
 )
 
 # save the plot
-fig.write_image(output_f + start_date_1.strftime("%B") +  scenario + ".png", width=1920, height=1080, scale=3)
+fig.write_image(output_f + start_date_1.strftime("%B") +  scenario + ".png", width=1920, height=800, scale=3)

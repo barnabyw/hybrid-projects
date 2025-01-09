@@ -10,7 +10,7 @@ import pandas as pd
 import os
 
 # Define the directory where the files are stored
-data_directory = "/Users/barnabywinser/Library/CloudStorage/OneDrive-SharedLibraries-Rheenergise/Commercial - Documents/Market data & analysis/Data bank/Market Data/Chile/raw/raw2/"  # Replace with the actual path to your data files
+data_directory = "/Users/barnabywinser/Library/CloudStorage/OneDrive-SharedLibraries-Rheenergise/Commercial - Documents/Market data & analysis/Data bank/Market Data/Chile/raw/"  # Replace with the actual path to your data files
 
 # Initialize an empty DataFrame to collect all data
 all_data = pd.DataFrame()
