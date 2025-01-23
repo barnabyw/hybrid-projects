@@ -13,7 +13,7 @@ import plotly.graph_objects as go
 
 """Graph specifications"""
 # Scenario for the single graph
-scenario = "A1.xlsm"
+scenario = "S1.xlsm"
 # Start date and range for the graph
 start_date = pd.to_datetime('2023-07-14 00:00:00')
 end_date = start_date + pd.Timedelta(days=7)
